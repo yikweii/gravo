@@ -2,12 +2,15 @@ import sounddevice as sd
 import numpy as np
 import wave
 import torch
-from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq
+from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq, pipeline
 from langdetect import detect
 import keyboard
 import time
 import os
 import librosa 
+
+
+chatbot = pipeline("text2text-generation", model="google/flan-t5-large")
 
 processor = AutoProcessor.from_pretrained("mesolitica/malaysian-whisper-medium-v2")
 model = AutoModelForSpeechSeq2Seq.from_pretrained("mesolitica/malaysian-whisper-medium-v2")
@@ -113,5 +116,5 @@ if __name__ == "__main__":
         print(f"Transcription: {transcription}")
         
         # Get chatbot response in the same language
-        get_chatbot_response(transcription, language)
+        get_chatbot_response(transcription, detected_language)
 
