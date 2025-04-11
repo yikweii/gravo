@@ -1,3 +1,15 @@
-Transcription for audio2.wav
+Transcription for audio3.wav //"mesolitica/malaysian-whisper-base"
+ Saya suka makan sokong.
 
+Transcription for audio3.wav //malaysia-ai/malaysian-whisper-small
+ Saya suka bergurau.
+
+Transcription for audio3.wav //"mesolitica/malaysian-whisper-large-v2"
+ Saya suka bagi khas sekolah.
+
+Transcription for audio3.wav //'malaysia-ai/malaysian-whisper-small'
+ Saya suka bergurau.
+
+Transcription for audio3.wav //"mesolitica/malaysian-whisper-medium-v2"
+ Saya suka pergi ke sekolah.
 

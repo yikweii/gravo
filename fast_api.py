@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from mic_capture import record_audio, save_audio_as_wav, transcribe_audio
 
 app = FastAPI()
-file = "temp_audio.wav"
+file = "audio.wav"
 
 # run command: uvicorn fast_api:app --reload
 @app.post("/record_audio/")
