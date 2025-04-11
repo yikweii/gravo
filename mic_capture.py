@@ -1,17 +1,19 @@
 import sounddevice as sd
 import numpy as np
 import wave
-import whisper
+import torch
+from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq
+from langdetect import detect
 import keyboard
 import time
 import os
+import librosa 
 
-# model: whisper tiny
-model = whisper.load_model("tiny")
-
-t_file="transcription.txt" #transcription filename
-max_duration = 60
-samplerate=16000
+processor = AutoProcessor.from_pretrained("mesolitica/malaysian-whisper-medium-v2")
+model = AutoModelForSpeechSeq2Seq.from_pretrained("mesolitica/malaysian-whisper-medium-v2")
+t_file = "transcription.txt"  # transcription filename
+max_duration = 20 # max record time: 20 sec
+samplerate = 16000
 
 def record_audio(max_duration, samplerate):
     print(f"Recording...(Press 'q' to stop)")
@@ -33,15 +35,15 @@ def record_audio(max_duration, samplerate):
     audio = np.concatenate(audio_buffer, axis=0).flatten()
     return audio
 
-def get_next_available_filename(base_name="audio", extension=".wav"):
+def get_filename(base_name, extension):
     i = 1
     while os.path.exists(f"{base_name}{i}{extension}"):
         i += 1
     return f"{base_name}{i}{extension}"
 
-def save_audio_as_wav(audio_data, samplerate, filename):
+def save_audio(audio_data, samplerate, filename=None):
     if filename is None:
-        filename = get_next_available_filename()
+        filename = get_filename(base_name="audio", extension=".wav")
     with wave.open(filename, "wb") as wf:
         wf.setnchannels(1)  # Mono channel
         wf.setsampwidth(2)  # 16-bit
@@ -50,13 +52,36 @@ def save_audio_as_wav(audio_data, samplerate, filename):
     print(f"Audio saved as {filename}")
     return filename
 
+# Language detection
+def lang_detect(text):
+    try:
+        supported_languages = ['en', 'ms', 'zh', 'ta']
+        language = detect(text)
+        if language in supported_languages:
+            return language
+        else:
+            return 'ms'  # Default to malay
+    except Exception as e:
+        print(f"Error detecting language: {e}")
+        return 'ms'
+
 def transcribe_audio(filename):
-    result = model.transcribe(filename, language="ms", fp16=False)  # Malay
-    print(f"Whisper Transcription Result: {result}")  # Debugging output
-    return result['text']
+    start_time = time.time()
+    audio_input, _ = librosa.load(filename, sr=samplerate)
+    inputs = processor(audio_input, return_tensors="pt", sampling_rate=samplerate)
+    attention_mask = torch.ones(inputs['input_features'].shape, dtype=torch.long) 
+    with torch.no_grad():
+        r = model.generate(inputs['input_features'], attention_mask=attention_mask, language='ms', return_timestamps=True)
+    transcription = processor.tokenizer.decode(r[0], skip_special_tokens=True)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    minutes = int(elapsed_time // 60)
+    seconds = int(elapsed_time % 60)
+    print(f"Transcription took: {minutes} min {seconds} sec")
+    return transcription
 
 def add_transcript_to_file(transcription, audio_label, t_file):
-    with open(t_file, "a", encoding="utf-8") as f:  
+    with open(t_file, "a", encoding="utf-8") as f:
         f.write(f"{audio_label}\n{transcription}\n\n")
 
 if __name__ == "__main__":
@@ -64,9 +89,10 @@ if __name__ == "__main__":
     if audio_data.size == 0:
         print("No audio recorded.")
     else:
-        a_file = get_next_available_filename(base_name="audio", extension=".wav")
-        audio_filename = save_audio_as_wav(audio_data, samplerate, filename=a_file)
+        a_file = get_filename(base_name="audio", extension=".wav")
+        audio_filename = save_audio(audio_data, samplerate, filename=a_file)
         transcription = transcribe_audio(audio_filename)
+        detected_language = lang_detect(transcription)
         add_transcript_to_file(transcription, f"Transcription for {audio_filename}", t_file)
         print(f"Transcription: {transcription}")
 
