@@ -90,13 +90,31 @@ def add_transcript_to_file(transcription, audio_label, t_file):
 
 def get_chatbot_response(text, language):
     prompt = (
-        f"You are a multilingual smart assistant for a Grab driver. The driver speaks in {language}.\n"
-        f"You are a smart AI assistant for a Grab driver. The driver said: \"{text}\"\n"
+        f"You are a smart assistant for a Grab driver. The driver speaks in {language}. "
+        f"Your job is to understand whether the driver is giving a command or just making conversation. "
+        f"Reply appropriately:\n\n"
+        
+        "If it's a command (like 'call customer', 'pick up food', 'add fuel'), update the task status clearly.\n"
+        "If it's casual conversation (like 'I'm tired', 'hello'), respond in a friendly, human way.\n\n"
+
         "Examples:\n"
-        "- If driver says 'arriving in 5 minutes', respond: 'Okay, I've sent a message to the customer: You will arrive in 5 minutes.'\n"
-        "- If driver says 'call customer', respond: 'Calling the customer now.'\n"
-        "- If driver says 'picked up the food', respond: 'Status updated: Order has been picked up.'\n"
-        f"Respond naturally in {language}."
+        "Driver: arriving in 5 minutes\n"
+        "Assistant: Okay, I've sent a message to the customer: You will arrive in 5 minutes.\n\n"
+        "Driver: call customer\n"
+        "Assistant: Calling the customer now.\n\n"
+        "Driver: picked up the food\n"
+        "Assistant: Status updated: Order has been picked up.\n\n"
+        "Driver: tambah minyak\n"
+        "Assistant: Status updated: Driver is adding fuel now.\n\n"
+        "Driver: saya ambil makanan\n"
+        "Assistant: Status updated: Order has been picked up.\n\n"
+        "Driver: hello\n"
+        "Assistant: Hi there! Hope your deliveries are going well.\n\n"
+        "Driver: penat sangat hari ini\n"
+        "Assistant: Dah lama memandu? Rehat sekejap kalau boleh ya.\n\n"
+        
+        f"Driver: {text}\n"
+        "Assistant:"
     )
     result = chatbot(prompt, max_length=100, do_sample=True)[0]['generated_text']
     print(f"🤖 Assistant ({language}): {result}")
