@@ -2,6 +2,7 @@ import sounddevice as sd
 import numpy as np
 import wave
 import torch
+#change for nlp
 from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq, pipeline
 from langdetect import detect
 import keyboard
@@ -9,7 +10,7 @@ import time
 import os
 import librosa 
 
-
+#change for nlp
 chatbot = pipeline("text2text-generation", model="google/flan-t5-large")
 
 processor = AutoProcessor.from_pretrained("mesolitica/malaysian-whisper-medium-v2")
@@ -87,7 +88,7 @@ def add_transcript_to_file(transcription, audio_label, t_file):
     with open(t_file, "a", encoding="utf-8") as f:
         f.write(f"{audio_label}\n{transcription}\n\n")
 
-
+#change for nlp
 def get_chatbot_response(text, language):
     prompt = (f"""You are a voice assistant for a Grab driver. Respond to the driver's input clearly.
               
@@ -98,6 +99,7 @@ def get_chatbot_response(text, language):
     print(f"Assistant ({language}): {result}")
     return result
 
+#change for nlp
 def match_command(text, lanqqg):
     text = text.lower()
 
@@ -117,6 +119,7 @@ def match_command(text, lanqqg):
             return response
     return None
 
+#change for nlp
 def handle_driver_input(text, language):
     command_response = match_command(text, language)
     if command_response:
@@ -143,6 +146,7 @@ if __name__ == "__main__":
         detected_language = lang_detect(transcription)
         add_transcript_to_file(transcription, f"Transcription for {audio_filename}", t_file)
         print(f"Transcription: {transcription}")
-        
+
+        #change for nlp
         handle_driver_input(transcription, detected_language)
 
