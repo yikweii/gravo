@@ -1,4 +1,4 @@
-(https://github.com/user-attachments/files/19720224/Documentation-Group.Ctrl%2BZzz.pdf)# 🎙️ Speech Transcription App
+# 🎙️ Speech Transcription App
 
 This is a real-time speech transcription app that:
 - Captures microphone input
