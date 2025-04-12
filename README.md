@@ -6,6 +6,15 @@ This is a real-time speech transcription app that:
 - Transcribes spoken content into text using a HuggingFace Whisper model
 - Supports language detection and transcription in Malay, English, and Chinese
 
+# Prototype
+
+
+# Slides
+
+
+# Documentation
+
+
 ---
 
 # Prerequisites
