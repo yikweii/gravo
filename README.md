@@ -1,4 +1,4 @@
-[Documentation-Group Ctrl+Zzz.pdf](https://github.com/user-attachments/files/19720224/Documentation-Group.Ctrl%2BZzz.pdf)# 🎙️ Speech Transcription App
+(https://github.com/user-attachments/files/19720224/Documentation-Group.Ctrl%2BZzz.pdf)# 🎙️ Speech Transcription App
 
 This is a real-time speech transcription app that:
 - Captures microphone input
@@ -13,7 +13,7 @@ https://www.figma.com/proto/mHcKzZri13j4wnnvAUW182/UM-Hackathon--Domain-3-?node-
 https://cloudmails-my.sharepoint.com/:b:/g/personal/tp070004_mail_apu_edu_my/EfDpngV-eSpOhHdyHxL-g94B6YatiNqnBbI7D1AJ2pR2RA?e=OBJsM4
 
 ## Documentation
-https://cloudmails-my.sharepoint.com/:b:/g/personal/tp070004_mail_apu_edu_my/EWxfArYJKwpKhIpcEWhnOHQB75iOaKWNQckeYdk-XJNqIg?e=AfpeyP
+[Documentation-Group Ctrl+Zzz.pdf]
 
 ---
 
