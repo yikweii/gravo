@@ -2,12 +2,15 @@ import sounddevice as sd
 import numpy as np
 import wave
 import torch
-from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq
+from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq, pipeline
 from langdetect import detect
 import keyboard
 import time
 import os
 import librosa 
+
+
+chatbot = pipeline("text2text-generation", model="google/flan-t5-large")  # Multilingual T5
 
 processor = AutoProcessor.from_pretrained("mesolitica/malaysian-whisper-medium-v2")
 model = AutoModelForSpeechSeq2Seq.from_pretrained("mesolitica/malaysian-whisper-medium-v2")
@@ -67,11 +70,12 @@ def lang_detect(text):
 
 def transcribe_audio(filename):
     start_time = time.time()
-    audio_input, _ = librosa.load(filename, sr=samplerate)
+    audio_input, _ = librosa.load(filename, sr=samplerate) 
     inputs = processor(audio_input, return_tensors="pt", sampling_rate=samplerate)
     attention_mask = torch.ones(inputs['input_features'].shape, dtype=torch.long) 
     with torch.no_grad():
         r = model.generate(inputs['input_features'], attention_mask=attention_mask, language='ms', return_timestamps=True)
+        #r = model.generate(inputs['input_features'],attention_mask=attention_mask,return_timestamps=True,task="transcribe")
     transcription = processor.tokenizer.decode(r[0], skip_special_tokens=True)
     end_time = time.time()
     elapsed_time = end_time - start_time
@@ -86,19 +90,48 @@ def add_transcript_to_file(transcription, audio_label, t_file):
 
 
 def get_chatbot_response(text, language):
-    prompt = (
-        f"You are a multilingual smart assistant for a Grab driver. The driver speaks in {language}.\n"
-        f"You are a smart AI assistant for a Grab driver. The driver said: \"{text}\"\n"
-        "Examples:\n"
-        "- If driver says 'arriving in 5 minutes', respond: 'Okay, I've sent a message to the customer: You will arrive in 5 minutes.'\n"
-        "- If driver says 'call customer', respond: 'Calling the customer now.'\n"
-        "- If driver says 'picked up the food', respond: 'Status updated: Order has been picked up.'\n"
-        f"Respond naturally in {language}."
+    prompt = (f"""You are a voice assistant for a Grab driver. Respond to the driver's input clearly.
+              
+        Driver: {text}q
+        Assistant:"""
     )
     result = chatbot(prompt, max_length=100, do_sample=True)[0]['generated_text']
-    print(f"🤖 Assistant ({language}): {result}")
+    print(f"Assistant ({language}): {result}")
     return result
 
+def match_command(text, lanqqg):
+    text = text.lower()
+
+    command_map = {
+        ("call customer", "panggil pelanggan"): "Calling the customer now.",
+        ("order picked", "ambil makanan", "saya ambil makanan"): "Status updated: Order has been picked up.",
+        ("add fuel", "tambah minyak"): "Status updated: Driver is adding fuel now.",
+        ("i have arrived", "sudah sampai", "saya sudah sampai"): "Okay, I've sent a message to the customer: You have arrived.",
+        ("i will arrive", "akan tiba", "sampai dalam", "dalam 5 minit"): "Okay, I've sent a message to the customer: You will arrive soon.",
+        ("accident", "kemalangan"): "Emergency alert: Accident reported. Notifying support.",
+        ("traffic jam", "jem"): "Status updated: Driver is currently stuck in traffic.",
+        ("emergency record", "rekod kecemasan"): "Recording started."
+    }
+
+    for keywords, response in command_map.items():
+        if any(keyword in text for keyword in keywords):
+            return response
+    return None
+
+def handle_driver_input(text, language):
+    command_response = match_command(text, language)
+    if command_response:
+        print(f"Assistant ({language}): {command_response}")
+
+        # Trigger emergency recording if needed
+        if "recording started" in command_response.lower():
+            emergency_audio = record_audio(max_duration, samplerate)
+            if emergency_audio.size > 0:
+                filename = save_audio(emergency_audio, samplerate, filename=get_filename("emergency_audio", ".wav"))
+                print(f"Emergency audio recorded and saved as: {filename}")
+        return command_response
+    else:
+        return get_chatbot_response(text, language)
 
 if __name__ == "__main__":
     audio_data = record_audio(max_duration, samplerate)
@@ -112,6 +145,4 @@ if __name__ == "__main__":
         add_transcript_to_file(transcription, f"Transcription for {audio_filename}", t_file)
         print(f"Transcription: {transcription}")
         
-        # Get chatbot response in the same language
-        get_chatbot_response(transcription, language)
-
+        handle_driver_input(transcription, detected_language)
