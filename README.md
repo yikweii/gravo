@@ -7,10 +7,10 @@ This is a real-time speech transcription app that:
 - Supports language detection and transcription in Malay, English, and Chinese
 
 ## Prototype
-
+https://www.figma.com/proto/mHcKzZri13j4wnnvAUW182/UM-Hackathon--Domain-3-?node-id=25-720&t=CH8vKx7FkFbrVDlR-1
 
 ## Slides
-
+https://www.canva.com/design/DAGkYQFEhqY/87ytKFx_GfQpsySAZlmNXQ/view?utm_content=DAGkYQFEhqY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6029ffcbc7
 
 ## Documentation
 
