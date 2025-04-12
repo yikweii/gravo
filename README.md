@@ -10,7 +10,7 @@ This is a real-time speech transcription app that:
 https://www.figma.com/proto/mHcKzZri13j4wnnvAUW182/UM-Hackathon--Domain-3-?node-id=25-720&t=CH8vKx7FkFbrVDlR-1
 
 ## Slides
-https://www.canva.com/design/DAGkYQFEhqY/87ytKFx_GfQpsySAZlmNXQ/view?utm_content=DAGkYQFEhqY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6029ffcbc7
+https://cloudmails-my.sharepoint.com/:b:/g/personal/tp070004_mail_apu_edu_my/EfDpngV-eSpOhHdyHxL-g94B6YatiNqnBbI7D1AJ2pR2RA?e=OBJsM4
 
 ## Documentation
 https://cloudmails-my.sharepoint.com/:b:/g/personal/tp070004_mail_apu_edu_my/EWxfArYJKwpKhIpcEWhnOHQB75iOaKWNQckeYdk-XJNqIg?e=AfpeyP
